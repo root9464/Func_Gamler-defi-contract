@@ -34,11 +34,13 @@ export class ContractGamlerDefi implements Contract {
   }
 
   //* functions
+
+  //* setters
   async sendSetJettonWalletAddress(provider: ContractProvider, via: Sender, new_address: Address) {
     await provider.internal(via, {
       value: toNano('0.05'),
       sendMode: SendMode.PAY_GAS_SEPARATELY,
-      body: beginCell().storeUint(0x9486490, 32).storeAddress(new_address).endCell(),
+      body: beginCell().storeUint(0x9486490, 32).storeUint(0, 64).storeAddress(new_address).endCell(),
     });
   }
 
@@ -56,5 +58,11 @@ export class ContractGamlerDefi implements Contract {
         .storeCoins(jettons_amount)
         .endCell(),
     });
+  }
+
+  //* getters
+  async getJettonWalletAddress(provider: ContractProvider): Promise<Address | null> {
+    const result = await provider.get('get_jetton_wallet_address', []);
+    return result.stack.readAddress();
   }
 }

@@ -4,40 +4,25 @@
 #include "helpers/helpers.fc";
 #include "includes/errors.fc";
 
+global slice this::admin_address;
 global slice this::jetton_wallet_address;
+
 global int msg::query_id;
 
 
-() set_storage(slice admin_address, slice jetton_wallet_address) impure {
+() set_global_state() impure inline {
   set_data(
     begin_cell()
-        .store_slice(admin_address)
-        .store_slice(jetton_wallet_address)
+        .store_slice(this::admin_address)
+        .store_slice(this::jetton_wallet_address)
     .end_cell()
-  );
-}
-
-(slice, slice) load_storage() impure {
-  slice contract_storage = get_data().begin_parse();
-  return (
-    contract_storage~load_msg_addr(),
-    contract_storage~load_msg_addr()
   );
 }
 
 () load_global_state() impure inline {
   slice contract_storage = get_data().begin_parse();
-  contract_storage~load_msg_addr();
-  
+  this::admin_address = contract_storage~load_msg_addr();
   this::jetton_wallet_address = contract_storage~load_msg_addr();
-}
-
-() set_global_state() impure inline {
-  set_data(
-    begin_cell()
-        .store_slice(this::jetton_wallet_address)
-    .end_cell()
-  );
 }
 
 () send_simple_jettons(slice to_address, int jettons_amount) impure inline {
@@ -73,27 +58,34 @@ global int msg::query_id;
   }
 
   slice sender_address = sliced_message~load_msg_addr();
+  load_global_state();
+
   int operation_code = in_msg_body~load_uint(32);
   msg::query_id = in_msg_body~load_uint(64);
 
-  (slice admin_address, slice jetton_wallet_address) = load_storage();
-  load_global_state();
-
   if (operation_code == operation::accept_jettons) {
-    send_simple_jettons(admin_address, msg_value);
+    int jettons_amount = in_msg_body~load_coins();
+    send_simple_jettons(sender_address, jettons_amount);
+    return ();
   }
 
   if (operation_code == operation::set_jetton_wallet_address) {
-    throw_unless(error::not_an_admin, equal_slices(admin_address, sender_address));
+    throw_unless(error::not_an_admin, equal_slices(this::admin_address, sender_address));
 
     slice new_address = in_msg_body~load_msg_addr();
     
     this::jetton_wallet_address = new_address;
     set_global_state();
+    return ();
   }
 }
 
 (slice) get_jetton_wallet_address() method_id {
   load_global_state();
   return (this::jetton_wallet_address);
+}
+
+(slice) get_admin_address() method_id {
+  load_global_state();
+  return (this::admin_address);
 }

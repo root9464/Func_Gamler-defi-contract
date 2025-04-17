@@ -1,16 +1,14 @@
 import { compile, NetworkProvider } from '@ton/blueprint';
 import { Address, toNano } from '@ton/core';
+import { admin_address, nullable_jetton_wallet_address } from '../constants/const';
 import { ContractGamlerDefi } from '../wrappers/ContractGamlerDefi';
 
 export async function run(provider: NetworkProvider) {
-  const admin_address = '0QANsjLvOX2MERlT4oyv2bSPEVc9lunSPIs5a1kPthCXydUX';
-  const jetton_wallet_address = 'EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c';
-
   const contractGamlerDefi = provider.open(
     ContractGamlerDefi.createFromConfig(
       {
         admin_address: Address.parse(admin_address),
-        jetton_wallet_address: Address.parse(jetton_wallet_address),
+        jetton_wallet_address: Address.parse(nullable_jetton_wallet_address),
       },
       await compile('ContractGamlerDefi'),
     ),
