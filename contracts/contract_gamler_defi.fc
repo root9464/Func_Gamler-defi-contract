@@ -2,6 +2,7 @@
 #include "includes/constants.fc";
 #include "includes/opcodes.fc";
 #include "helpers/helpers.fc";
+#include "includes/errors.fc";
 
 global slice this::jetton_wallet_address;
 global int msg::query_id;
@@ -24,12 +25,14 @@ global int msg::query_id;
   );
 }
 
-() load_global_state() impure {
+() load_global_state() impure inline {
   slice contract_storage = get_data().begin_parse();
+  contract_storage~load_msg_addr();
+  
   this::jetton_wallet_address = contract_storage~load_msg_addr();
 }
 
-() set_global_state() impure {
+() set_global_state() impure inline {
   set_data(
     begin_cell()
         .store_slice(this::jetton_wallet_address)
@@ -70,14 +73,27 @@ global int msg::query_id;
   }
 
   slice sender_address = sliced_message~load_msg_addr();
-
   int operation_code = in_msg_body~load_uint(32);
   msg::query_id = in_msg_body~load_uint(64);
 
-  (slice admin_adress, slice jetton_wallet_address) = load_storage();
+  (slice admin_address, slice jetton_wallet_address) = load_storage();
   load_global_state();
 
   if (operation_code == operation::accept_jettons) {
-    send_simple_jettons(admin_adress, msg_value);
+    send_simple_jettons(admin_address, msg_value);
   }
+
+  if (operation_code == operation::set_jetton_wallet_address) {
+    throw_unless(error::not_an_admin, equal_slices(admin_address, sender_address));
+
+    slice new_address = in_msg_body~load_msg_addr();
+    
+    this::jetton_wallet_address = new_address;
+    set_global_state();
+  }
+}
+
+(slice) get_jetton_wallet_address() method_id {
+  load_global_state();
+  return (this::jetton_wallet_address);
 }

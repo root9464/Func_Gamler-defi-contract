@@ -4,7 +4,7 @@ import { ContractGamlerDefi } from '../wrappers/ContractGamlerDefi';
 
 export async function run(provider: NetworkProvider) {
   const admin_address = '0QANsjLvOX2MERlT4oyv2bSPEVc9lunSPIs5a1kPthCXydUX';
-  const jetton_wallet_address = 'EQCcKc85YmbepP-9EsdBBeizEBYHJQniJrTEVoaqMZs3vodt';
+  const jetton_wallet_address = 'EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c';
 
   const contractGamlerDefi = provider.open(
     ContractGamlerDefi.createFromConfig(

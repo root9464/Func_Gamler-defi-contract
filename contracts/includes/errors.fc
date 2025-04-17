@@ -1,2 +1,2 @@
 const error::malo_tonov_na_comission = 1001;
-
+const error::not_an_admin = 1002;

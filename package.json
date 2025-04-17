@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "scripts": {
     "bp": "blueprint",
-    "start": "blueprint run",
+    "run": "blueprint run",
     "build": "blueprint build",
     "test": "jest --verbose",
-    "deploytest": "blueprint run --testnet --mnemonic"
+    "run::test": "blueprint run --testnet --mnemonic"
   },
   "devDependencies": {
     "@ton/blueprint": "^0.29.0",
