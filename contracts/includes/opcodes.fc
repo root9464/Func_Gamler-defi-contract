@@ -1,0 +1,2 @@
+const int operation::jetton::transfer =           0xf8a7ea5; ;; standart jetton wallet operation code
+const int operation::accept_jettons =             0x7362d09c;

@@ -1,0 +1,4 @@
+
+#include "../imports/stdlib.fc";
+
+slice  helper::addr_none()                asm "b{00} PUSHSLICE";            ;; creates an addr_none$00 slice
