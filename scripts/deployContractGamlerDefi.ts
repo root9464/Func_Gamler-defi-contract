@@ -1,13 +1,24 @@
-import { toNano } from '@ton/core';
-import { ContractGamlerDefi } from '../wrappers/ContractGamlerDefi';
 import { compile, NetworkProvider } from '@ton/blueprint';
+import { Address, toNano } from '@ton/core';
+import { ContractGamlerDefi } from '../wrappers/ContractGamlerDefi';
 
 export async function run(provider: NetworkProvider) {
-    const contractGamlerDefi = provider.open(ContractGamlerDefi.createFromConfig({}, await compile('ContractGamlerDefi')));
+  const admin_address = '0x0000000000000000000000000000000000000000';
+  const jetton_wallet_address = '0x0000000000000000000000000000000000000000';
 
-    await contractGamlerDefi.sendDeploy(provider.sender(), toNano('0.05'));
+  const contractGamlerDefi = provider.open(
+    ContractGamlerDefi.createFromConfig(
+      {
+        admin_address: Address.parse(admin_address),
+        jetton_wallet_address: Address.parse(jetton_wallet_address),
+      },
+      await compile('ContractGamlerDefi'),
+    ),
+  );
 
-    await provider.waitForDeploy(contractGamlerDefi.address);
+  await contractGamlerDefi.sendDeploy(provider.sender(), toNano('0.05'));
 
-    // run methods on `contractGamlerDefi`
+  await provider.waitForDeploy(contractGamlerDefi.address);
+
+  // run methods on `contractGamlerDefi`
 }

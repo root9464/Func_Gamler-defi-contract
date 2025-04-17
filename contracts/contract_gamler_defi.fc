@@ -37,10 +37,10 @@ global int msg::query_id;
   );
 }
 
-() send_simple_jettons(slice to_address, int jetton_amount) impure inline {
+() send_simple_jettons(slice to_address, int jettons_amount) impure inline {
   builder message = begin_cell()
     .store_uint(BOUNCEABLE, MSG_TYPE_SIZE)
-    .store_coins(this::jetton_wallet_address)
+    .store_slice(this::jetton_wallet_address)
     .store_coins(MAX_COMISSION * 2)
     .store_uint(0, MSG_ONLY_BODY_SIZE)
     .store_uint(operation::jetton::transfer, OPERATION_CODE_SIZE)
@@ -50,10 +50,9 @@ global int msg::query_id;
     .store_slice(helper::addr_none())  ;; response_address
     .store_int(0, 1)  ;; empty custom_payload
     .store_coins(0)   ;; forward amount to new_owner_address
-    .store_int(0, 1) ;; empty forward_payload
-  .end_cell();
+    .store_int(0, 1); ;; empty forward_payload
 
-  send_raw_message(message, SEND_MODE_PAY_FEES_SEPARATELY);
+  send_raw_message(message.end_cell(), SEND_MODE_PAY_FEES_SEPARATELY);
 }
 
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
@@ -74,4 +73,9 @@ global int msg::query_id;
   int operation_code = in_msg_body~load_uint(32);
   msg::query_id = in_msg_body~load_uint(64);
 
+  (slice admin_adress, slice jetton_wallet_address) = load_storage();
+
+  if (operation_code == operation::accept_jettons) {
+    send_simple_jettons(admin_adress, msg_value);
+  }
 }
