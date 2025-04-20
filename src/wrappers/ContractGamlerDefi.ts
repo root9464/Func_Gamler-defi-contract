@@ -1,4 +1,5 @@
 import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode, toNano } from '@ton/core';
+import { contract_address } from '../constants/const';
 
 export type ContractGamlerDefiConfig = {
   admin_address: Address;
@@ -46,19 +47,29 @@ export class ContractGamlerDefi implements Contract {
 
   async sendAcceptJettons(provider: ContractProvider, via: Sender, to_address: Address, jettons_amount: bigint) {
     await provider.internal(via, {
-      value: jettons_amount,
+      value: toNano('0.1'),
       sendMode: SendMode.PAY_GAS_SEPARATELY,
       body: beginCell()
         .storeUint(0xf8a7ea5, 32)
         .storeUint(Math.floor(Date.now() / 1000), 64)
-        .storeCoins(toNano(10))
-        .storeAddress(to_address)
-        .storeUint(0, 2)
-        .storeUint(0, 1)
         .storeCoins(jettons_amount)
+        .storeAddress(Address.parse(contract_address)) // адресс смарта
+        .storeUint(0, 2) // response address -- null
+        .storeUint(0, 1)
+        .storeCoins(toNano(0.05))
+        .storeBit(1)
+        .storeRef(beginCell().storeAddress(to_address).endCell())
         .endCell(),
     });
   }
+
+  // async sendAcceptJettons(provider: ContractProvider, via: Sender, jettons_amount: bigint) {
+  //   await provider.internal(via, {
+  //     value: jettons_amount,
+  //     sendMode: SendMode.PAY_GAS_SEPARATELY,
+  //     body: beginCell().storeUint(0x7362d09c, 32).storeCoins(jettons_amount).endCell(),
+  //   });
+  // }
 
   //* getters
   async getJettonWalletAddress(provider: ContractProvider): Promise<Address | null> {

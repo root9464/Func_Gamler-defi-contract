@@ -1,3 +1,4 @@
 
 slice  helper::addr_none()                asm "b{00} PUSHSLICE";            ;; creates an addr_none$00 slice
 int equal_slices(slice a, slice b) asm "SDEQ";
+slice helper::dump_slice(slice s) asm "s0 DUMP";
