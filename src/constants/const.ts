@@ -1,4 +1,4 @@
-const contract_address = 'kQDV7mPe-mPRafNi2SGADb3NGKmgqJ6RzULo06lDhemn_OoT';
+const contract_address = 'kQCsrJY70zMZ1XVx2GOX1cbOoWoXKhe_9t4lDZfeocA7cwJD';
 
 const admin_address = '0QANsjLvOX2MERlT4oyv2bSPEVc9lunSPIs5a1kPthCXydUX';
 const nullable_jetton_wallet_address = 'EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c';

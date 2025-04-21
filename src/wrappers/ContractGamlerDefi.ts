@@ -63,13 +63,13 @@ export class ContractGamlerDefi implements Contract {
     });
   }
 
-  // async sendAcceptJettons(provider: ContractProvider, via: Sender, jettons_amount: bigint) {
-  //   await provider.internal(via, {
-  //     value: jettons_amount,
-  //     sendMode: SendMode.PAY_GAS_SEPARATELY,
-  //     body: beginCell().storeUint(0x7362d09c, 32).storeCoins(jettons_amount).endCell(),
-  //   });
-  // }
+  async sendTransferJettons(provider: ContractProvider, via: Sender, to_address: Address, jettons_amount: bigint) {
+    await provider.internal(via, {
+      value: jettons_amount,
+      sendMode: SendMode.PAY_GAS_SEPARATELY,
+      body: beginCell().storeUint(0xfba77a9, 32).storeUint(0, 64).storeCoins(jettons_amount).storeAddress(to_address).endCell(),
+    });
+  }
 
   //* getters
   async getJettonWalletAddress(provider: ContractProvider): Promise<Address | null> {
