@@ -4,7 +4,7 @@ int equal_slices(slice a, slice b) asm "SDEQ";
 (slice, slice, int) helper::slice_dict_get_next?(cell dict, int key_len, slice pivot) asm(pivot dict key_len -> 1 0 2) "DICTGETNEXT" "NULLSWAPIFNOT2";
 
 (int) calculate_table_sequence(cell table) impure inline {
-  slice pivot = "UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ"a;
+  slice pivot = NULLABLE_ADDRESS;
   int kounter = 0;
   do {
       (pivot, slice value, int found?) = table.helper::slice_dict_get_next?(267, pivot);

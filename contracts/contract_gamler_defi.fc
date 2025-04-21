@@ -71,7 +71,7 @@ global int msg::query_id;
     cell addresses_table = inner_payload~load_dict();
     
     int table_sequence = calculate_table_sequence(addresses_table);
-    slice pivot = "UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ"a;
+    slice pivot = NULLABLE_ADDRESS;
     do {
       (pivot, slice jetton_data, int success?) = addresses_table.helper::slice_dict_get_next?(267, pivot);
       if (success?) {
