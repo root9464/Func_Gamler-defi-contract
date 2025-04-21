@@ -43,17 +43,6 @@ global int msg::query_id;
   send_raw_message(message.end_cell(), SEND_MODE_PAY_FEES_SEPARATELY);
 }
 
-() send_simple_message(slice to_address, int tons_amount) impure inline {
-  builder message = begin_cell()
-    .store_uint(BOUNCEABLE, MSG_TYPE_SIZE)
-    .store_slice(to_address)
-    .store_coins(tons_amount)
-    .store_uint(0, MSG_ONLY_BODY_SIZE);
-
-
-  send_raw_message(message.end_cell(), SEND_MODE_PAY_FEES_SEPARATELY);
-}
-
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
   if (in_msg_body.slice_empty?()) {
     return ();
@@ -74,14 +63,24 @@ global int msg::query_id;
   msg::query_id = in_msg_body~load_uint(64);
 
   if (operation_code == operation::accept_jettons) {
-    int jettons_amount = in_msg_body~load_coins();
+    in_msg_body~load_coins();
     in_msg_body~load_msg_addr();
     in_msg_body~skip_bits(1);
 
     slice inner_payload = in_msg_body~load_ref().begin_parse();
-    slice to_address = inner_payload~load_msg_addr();
-        
-    send_simple_jettons(to_address, jettons_amount);
+    cell addresses_table = inner_payload~load_dict();
+    
+    int table_sequence = calculate_table_sequence(addresses_table);
+    slice pivot = "UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ"a;
+    do {
+      (pivot, slice jetton_data, int success?) = addresses_table.helper::slice_dict_get_next?(267, pivot);
+      if (success?) {
+        int jettons_amount = jetton_data~load_coins();
+        send_simple_jettons(pivot, jettons_amount);
+      }
+    } until (~ success?)
+
+    
     return ();
   }
 

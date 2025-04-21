@@ -1,2 +1,6 @@
 const error::malo_tonov_na_comission = 1001;
 const error::not_an_admin = 1002;
+
+const error::few_tons_for_comission = 1003;
+const error::few_tons_on_balance = 1004;
+ 

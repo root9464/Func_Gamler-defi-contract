@@ -1,6 +1,7 @@
 
 const int MAX_COMISSION = 25000000; ;; 0.025 TON
 const int MIN_TONS_FOR_STORGAE = 50000000; ;; 0.05 TON
+const int TONS_FOR_COMISSION = 30000000; ;; 0.03 TON
 
 const int BOUNCEABLE = 0x18; ;; 0b011000 tag - 0, ihr_disabled - 1, bounce - 1, bounced - 0, src = adr_none$00
 

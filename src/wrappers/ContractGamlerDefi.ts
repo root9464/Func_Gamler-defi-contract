@@ -1,4 +1,4 @@
-import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode, toNano } from '@ton/core';
+import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Dictionary, Sender, SendMode, toNano } from '@ton/core';
 import { contract_address } from '../constants/const';
 
 export type ContractGamlerDefiConfig = {
@@ -45,9 +45,9 @@ export class ContractGamlerDefi implements Contract {
     });
   }
 
-  async sendAcceptJettons(provider: ContractProvider, via: Sender, to_address: Address, jettons_amount: bigint) {
+  async sendAcceptJettons(provider: ContractProvider, via: Sender, jettons_amount: bigint, dictionary: Dictionary<Address, bigint>) {
     await provider.internal(via, {
-      value: toNano('0.1'),
+      value: toNano('0.4'),
       sendMode: SendMode.PAY_GAS_SEPARATELY,
       body: beginCell()
         .storeUint(0xf8a7ea5, 32)
@@ -56,9 +56,9 @@ export class ContractGamlerDefi implements Contract {
         .storeAddress(Address.parse(contract_address)) // адресс смарта
         .storeUint(0, 2) // response address -- null
         .storeUint(0, 1)
-        .storeCoins(toNano(0.05))
+        .storeCoins(toNano(0.1))
         .storeBit(1)
-        .storeRef(beginCell().storeAddress(to_address).endCell())
+        .storeRef(beginCell().storeDict(dictionary).endCell())
         .endCell(),
     });
   }
