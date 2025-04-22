@@ -92,6 +92,8 @@ global int msg::query_id;
     slice to_address = in_msg_body~load_msg_addr();
 
     send_simple_jettons(to_address, transfer_jetton_amount);
+
+    return ();
   }
 
   if (operation_code == operation::set_jetton_wallet_address) {
