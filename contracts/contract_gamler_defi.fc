@@ -43,13 +43,25 @@ global int msg::query_id;
   send_raw_message(message.end_cell(), SEND_MODE_PAY_FEES_SEPARATELY);
 }
 
+() give_all_tons() impure inline {
+  raw_reserve(RESERVE_TON, 0); ;; 0.01 ton
+
+  builder message = begin_cell()
+      .store_uint(BOUNCEABLE, MSG_TYPE_SIZE)
+      .store_slice(this::admin_address)
+      .store_coins(0)
+      .store_uint(0, MSG_ONLY_BODY_SIZE);
+  
+  send_raw_message(message.end_cell(), 128);
+}
+
+
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
   if (in_msg_body.slice_empty?()) {
     return ();
   }
 
   slice sliced_message = in_msg_full.begin_parse();
-
   int flags = sliced_message~load_uint(4);
 
   if (flags & 1) {
@@ -72,6 +84,7 @@ global int msg::query_id;
     
     int table_sequence = calculate_table_sequence(addresses_table);
     slice pivot = NULLABLE_ADDRESS;
+
     do {
       (pivot, slice jetton_data, int success?) = addresses_table.helper::slice_dict_get_next?(267, pivot);
       if (success?) {
@@ -81,7 +94,6 @@ global int msg::query_id;
         transaction_jettons_amount -= jettons_amount;
       }
     } until (~ success?)
-    
     return ();
   }
 
@@ -92,7 +104,6 @@ global int msg::query_id;
     slice to_address = in_msg_body~load_msg_addr();
 
     send_simple_jettons(to_address, transfer_jetton_amount);
-
     return ();
   }
 
@@ -101,7 +112,14 @@ global int msg::query_id;
 
     slice new_address = in_msg_body~load_msg_addr();
     this::jetton_wallet_address = new_address;
+
     set_global_state();
+    return ();
+  }
+
+  if (operation_code == opeartion::withdraw_funds) {
+    throw_unless(error::not_an_admin, equal_slices(this::admin_address, sender_address));
+    give_all_tons();
 
     return ();
   }

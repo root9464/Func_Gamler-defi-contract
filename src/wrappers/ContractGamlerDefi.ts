@@ -71,6 +71,14 @@ export class ContractGamlerDefi implements Contract {
     });
   }
 
+  async sendWithdrawFunds(provider: ContractProvider, via: Sender) {
+    await provider.internal(via, {
+      value: toNano('0.05'),
+      sendMode: SendMode.PAY_GAS_SEPARATELY,
+      body: beginCell().storeUint(0x456ab, 32).storeUint(0, 64).endCell(),
+    });
+  }
+
   //* getters
   async getJettonWalletAddress(provider: ContractProvider): Promise<Address | null> {
     const result = await provider.get('get_jetton_wallet_address', []);
