@@ -63,11 +63,11 @@ export class ContractGamlerDefi implements Contract {
     });
   }
 
-  async sendTransferJettons(provider: ContractProvider, via: Sender, to_address: Address, jettons_amount: bigint) {
+  async sendTransferJettons(provider: ContractProvider, via: Sender, dictionary?: Dictionary<Address, bigint>) {
     await provider.internal(via, {
-      value: jettons_amount,
+      value: toNano('0.1'),
       sendMode: SendMode.PAY_GAS_SEPARATELY,
-      body: beginCell().storeUint(0xfba77a9, 32).storeUint(0, 64).storeCoins(jettons_amount).storeAddress(to_address).endCell(),
+      body: beginCell().storeUint(0xfba77a9, 32).storeUint(0, 64).storeDict(dictionary).endCell(),
     });
   }
 

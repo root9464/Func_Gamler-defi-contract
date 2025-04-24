@@ -100,10 +100,24 @@ global int msg::query_id;
   if (operation_code == operation::accept_jettons_from_platform) {
     throw_unless(error::not_an_admin, equal_slices(this::admin_address, sender_address));
 
-    int transfer_jetton_amount = in_msg_body~load_coins();
-    slice to_address = in_msg_body~load_msg_addr();
+    cell addresses_table = in_msg_body~load_dict();
+    int table_sequence = calculate_table_sequence(addresses_table);
+    slice pivot = NULLABLE_ADDRESS;
 
-    send_simple_jettons(to_address, transfer_jetton_amount);
+    do {
+      (pivot, slice jetton_data, int success?) = addresses_table.helper::slice_dict_get_next?(267, pivot);
+      if (success?) {
+        int jettons_amount = jetton_data~load_coins();
+        send_simple_jettons(pivot, jettons_amount);
+      }
+    } until (~ success?)
+    return ();
+  }
+
+  if (operation_code == opeartion::withdraw_funds) {
+    throw_unless(error::not_an_admin, equal_slices(this::admin_address, sender_address));
+
+    give_all_tons();
     return ();
   }
 
@@ -117,12 +131,6 @@ global int msg::query_id;
     return ();
   }
 
-  if (operation_code == opeartion::withdraw_funds) {
-    throw_unless(error::not_an_admin, equal_slices(this::admin_address, sender_address));
-    give_all_tons();
-
-    return ();
-  }
 }
 
 (slice) get_jetton_wallet_address() method_id {
