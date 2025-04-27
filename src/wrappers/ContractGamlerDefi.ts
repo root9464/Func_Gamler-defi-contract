@@ -4,10 +4,17 @@ import { contract_address } from '../constants/const';
 export type ContractGamlerDefiConfig = {
   admin_address: Address;
   jetton_wallet_address: Address;
+  minter_code: Cell;
+  jetton_minter_address: Address;
 };
 
 export function contractGamlerDefiConfigToCell(config: ContractGamlerDefiConfig): Cell {
-  return beginCell().storeAddress(config.admin_address).storeAddress(config.jetton_wallet_address).endCell();
+  return beginCell()
+    .storeAddress(config.admin_address)
+    .storeAddress(config.jetton_wallet_address)
+    .storeRef(config.minter_code)
+    .storeAddress(config.jetton_minter_address)
+    .endCell();
 }
 
 export class ContractGamlerDefi implements Contract {

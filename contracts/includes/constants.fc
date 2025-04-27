@@ -6,7 +6,7 @@ const slice NULLABLE_ADDRESS = "UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ
 const int RESERVE_TON = 10000000; ;; 0.01
 
 const int BOUNCEABLE = 0x18; ;; 0b011000 tag - 0, ihr_disabled - 1, bounce - 1, bounced - 0, src = adr_none$00
-
+const int WORKCHAIN = 0;
 
 const int OPERATION_CODE_SIZE = 32;
 const int QUERY_ID_SIZE = 64;
