@@ -4,16 +4,20 @@ import { contract_address } from '../constants/const';
 export type ContractGamlerDefiConfig = {
   admin_address: Address;
   jetton_wallet_address: Address;
-  minter_code: Cell;
-  jetton_minter_address: Address;
+
+  jetton_master_address: Address;
+  jetton_master_code: Cell;
+  jetton_master_data: Cell;
 };
 
 export function contractGamlerDefiConfigToCell(config: ContractGamlerDefiConfig): Cell {
   return beginCell()
     .storeAddress(config.admin_address)
     .storeAddress(config.jetton_wallet_address)
-    .storeRef(config.minter_code)
-    .storeAddress(config.jetton_minter_address)
+
+    .storeAddress(config.jetton_master_address)
+    .storeRef(config.jetton_master_code)
+    .storeRef(config.jetton_master_data)
     .endCell();
 }
 

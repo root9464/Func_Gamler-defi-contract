@@ -7,8 +7,11 @@
 
 global slice this::admin_address;
 global slice this::jetton_wallet_address;
-global cell this::jetton_wallet_code;
-global slice this::jetton_minter_address;
+
+global slice this::jetton_master_address;
+global cell this::jetton_master_code;
+global cell this::jetton_master_data;
+
 
 global int msg::query_id;
 
@@ -16,10 +19,12 @@ global int msg::query_id;
 () set_global_state() impure inline {
   set_data(
     begin_cell()
-        .store_slice(this::admin_address)
-        .store_slice(this::jetton_wallet_address)
-        .store_ref(this::jetton_wallet_code)
-        .store_slice(this::jetton_minter_address)
+      .store_slice(this::admin_address)
+      .store_slice(this::jetton_wallet_address)
+      
+      .store_slice(this::jetton_master_address)
+      .store_ref(this::jetton_master_code)
+      .store_ref(this::jetton_master_data)
     .end_cell()
   );
 }
@@ -28,8 +33,10 @@ global int msg::query_id;
   slice contract_storage = get_data().begin_parse();
   this::admin_address = contract_storage~load_msg_addr();
   this::jetton_wallet_address = contract_storage~load_msg_addr();
-  this::jetton_wallet_code = contract_storage~load_ref();
-  this::jetton_minter_address = contract_storage~load_msg_addr();
+  
+  this::jetton_master_address = contract_storage~load_msg_addr();
+  this::jetton_master_code = contract_storage~load_ref();
+  this::jetton_master_data = contract_storage~load_ref();
 }
 
 () send_simple_jettons(slice to_address, int jettons_amount) impure inline {
@@ -54,10 +61,10 @@ global int msg::query_id;
   raw_reserve(RESERVE_TON, 0); ;; 0.01 ton
 
   builder message = begin_cell()
-      .store_uint(BOUNCEABLE, MSG_TYPE_SIZE)
-      .store_slice(this::admin_address)
-      .store_coins(0)
-      .store_uint(0, MSG_ONLY_BODY_SIZE);
+    .store_uint(BOUNCEABLE, MSG_TYPE_SIZE)
+    .store_slice(this::admin_address)
+    .store_coins(0)
+    .store_uint(0, MSG_ONLY_BODY_SIZE);
   
   send_raw_message(message.end_cell(), 128);
 }
@@ -113,6 +120,8 @@ global int msg::query_id;
 
     do {
       (pivot, slice jetton_data, int success?) = addresses_table.helper::slice_dict_get_next?(267, pivot);
+      
+
       if (success?) {
         int jettons_amount = jetton_data~load_coins();
         send_simple_jettons(pivot, jettons_amount);
@@ -145,7 +154,7 @@ global int msg::query_id;
   return (this::jetton_wallet_address);
 }
 
-slice get_wallet_address(slice owner_address) method_id {
+slice get_wallet_address(slice address) method_id {
   load_global_state();
-  return calculate_user_jetton_wallet_address(owner_address, this::jetton_minter_address, this::jetton_wallet_code);
+  return calculate_jetton_wallet_address(address, this::jetton_master_code, this::jetton_master_data, this::jetton_master_address);
 }
