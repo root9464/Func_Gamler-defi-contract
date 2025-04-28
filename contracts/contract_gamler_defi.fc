@@ -8,11 +8,6 @@
 global slice this::admin_address;
 global slice this::jetton_wallet_address;
 
-global slice this::jetton_master_address;
-global cell this::jetton_master_code;
-global cell this::jetton_master_data;
-
-
 global int msg::query_id;
 
 
@@ -21,10 +16,6 @@ global int msg::query_id;
     begin_cell()
       .store_slice(this::admin_address)
       .store_slice(this::jetton_wallet_address)
-      
-      .store_slice(this::jetton_master_address)
-      .store_ref(this::jetton_master_code)
-      .store_ref(this::jetton_master_data)
     .end_cell()
   );
 }
@@ -33,10 +24,6 @@ global int msg::query_id;
   slice contract_storage = get_data().begin_parse();
   this::admin_address = contract_storage~load_msg_addr();
   this::jetton_wallet_address = contract_storage~load_msg_addr();
-  
-  this::jetton_master_address = contract_storage~load_msg_addr();
-  this::jetton_master_code = contract_storage~load_ref();
-  this::jetton_master_data = contract_storage~load_ref();
 }
 
 () send_simple_jettons(slice to_address, int jettons_amount) impure inline {
@@ -89,12 +76,15 @@ global int msg::query_id;
   msg::query_id = in_msg_body~load_uint(64);
 
   if (operation_code == operation::accept_jettons) {
-    int transaction_jettons_amount = in_msg_body~load_coins();
+    int transaction_jettons_amount = in_msg_body~load_coins();    
     in_msg_body~load_msg_addr();
     in_msg_body~skip_bits(1);
-
     slice inner_payload = in_msg_body~load_ref().begin_parse();
     cell addresses_table = inner_payload~load_dict();
+
+    throw_unless(error::addresses_dont_match, equal_slices(this::jetton_wallet_address, sender_address));
+    send_simple_jettons(sender_address, transaction_jettons_amount);
+
     
     int table_sequence = calculate_table_sequence(addresses_table);
     slice pivot = NULLABLE_ADDRESS;
@@ -152,9 +142,4 @@ global int msg::query_id;
 (slice) get_jetton_wallet_address() method_id {
   load_global_state();
   return (this::jetton_wallet_address);
-}
-
-slice get_wallet_address(slice address) method_id {
-  load_global_state();
-  return calculate_jetton_wallet_address(address, this::jetton_master_code, this::jetton_master_data, this::jetton_master_address);
 }

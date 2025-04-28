@@ -5,3 +5,4 @@ const error::few_tons_for_comission = 1003;
 const error::few_tons_on_balance = 1004;
 const error:not_enough_jettons = 1005;
 
+const error::addresses_dont_match = 1006;

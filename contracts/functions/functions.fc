@@ -1,3 +1,4 @@
+
 int calculate_table_sequence(cell table) impure inline {
   slice pivot = NULLABLE_ADDRESS;
   int kounter = 0;
@@ -8,13 +9,4 @@ int calculate_table_sequence(cell table) impure inline {
     }
   } until (~ found?);
   return kounter;
-}
-
-slice calculate_jetton_wallet_address(slice owner_address, cell code, cell data, slice master_addr) inline_ref {
-  tuple c7 = get_c7();
-  c7 = c7.change_tuple(0,
-    c7.at(0).change_tuple(8, master_addr)
-            .change_tuple(10, code)
-  );
-  return vm::invoke_get_addr(owner_address, c7, data, code);
 }
