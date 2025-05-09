@@ -10,7 +10,6 @@ export async function run(provider: NetworkProvider) {
 
   const dictionary = createJettonsDictionary([
     { address: Address.parse('0QAYRw04JzUo1IEK6TL6vKfos66gsdN6vUFfJeA3OOjOfDPG'), amount: toNano('0.2') },
-    { address: Address.parse('0QD-q5a1Z3kYfDBgYUcUX_MigynA5FuiNx0i5ySt37rfrFeP'), amount: toNano('0.3') }, //v5
   ]);
 
   await contractGamlerDefi.sendAcceptJettons(provider.sender(), toNano('0.5'), dictionary);
