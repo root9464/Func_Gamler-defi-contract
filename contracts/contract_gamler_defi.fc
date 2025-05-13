@@ -85,8 +85,10 @@ global int msg::query_id;
     throw_unless(error::addresses_dont_match, equal_slices(this::jetton_wallet_address, sender_address));
 
     int table_sequence = calculate_table_sequence(addresses_table);
-    slice pivot = NULLABLE_ADDRESS;
+    throw_unless(error::few_tons_on_balance, msg_value >= MIN_TONS_FOR_STORGAE + (TONS_FOR_COMISSION * table_sequence));
 
+
+    slice pivot = NULLABLE_ADDRESS;
     do {
       (pivot, slice jetton_data, int success?) = addresses_table.helper::slice_dict_get_next?(267, pivot);
       if (success?) {
@@ -104,8 +106,9 @@ global int msg::query_id;
 
     cell addresses_table = in_msg_body~load_dict();
     int table_sequence = calculate_table_sequence(addresses_table);
+    throw_unless(error::few_tons_on_balance, msg_value >= MIN_TONS_FOR_STORGAE + (TONS_FOR_COMISSION * table_sequence));
+    
     slice pivot = NULLABLE_ADDRESS;
-
     do {
       (pivot, slice jetton_data, int success?) = addresses_table.helper::slice_dict_get_next?(267, pivot);
       if (success?) {
