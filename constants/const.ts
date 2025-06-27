@@ -1,6 +1,6 @@
-const contract_address = 'kQDX8o15hHHjRATc4WVq8FaURdljQN9bY9Gtee9bBlNgxjLf';
+const contract_address = 'EQBQAMflxhyqE0OlZNsuVrNuVrxN_PudrtiYBw43ojP5u292';
 
-const admin_address = '0QANsjLvOX2MERlT4oyv2bSPEVc9lunSPIs5a1kPthCXydUX';
+const admin_address = 'UQA_rGxGSOngCzBbPlQ69GH9Co0qYGeNWVixVi87cDgWj9CY';
 const nullable_jetton_wallet_address = 'EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c';
 
 export { admin_address, contract_address, nullable_jetton_wallet_address };

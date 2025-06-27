@@ -4,7 +4,7 @@ import { contract_address } from '../constants/const';
 import { ContractGamlerDefi } from '../wrappers/ContractGamlerDefi';
 
 export async function run(provider: NetworkProvider) {
-  const new_jetton_wallet_address = 'kQCqloeu-iLkRV2Ka823fuNWHltZLpRmPdMCdfEtLNfb2pOJ';
+  const new_jetton_wallet_address = 'EQAQghLI_ZXSRcJ9k2yal_TuCY8EnDxPHkwHalbJ6FvgzcTo';
 
   const contractGamlerDefi = provider.open(ContractGamlerDefi.createFromAddress(Address.parse(contract_address)));
 
