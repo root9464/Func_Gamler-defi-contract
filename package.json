@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "bp": "blueprint",
-    "run::mainnet": "blueprint run --mainnet",
+    "run::mainnet": "blueprint run --mainnet --mnemonic",
     "build": "blueprint build",
     "test": "jest --verbose",
     "run::test": "blueprint run --testnet --mnemonic"
